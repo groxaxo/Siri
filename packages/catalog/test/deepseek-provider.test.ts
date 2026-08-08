@@ -3,6 +3,7 @@ import { buildModel } from "@oh-my-pi/pi-catalog/build";
 import { Effort } from "@oh-my-pi/pi-catalog/effort";
 import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
 import { applyDeepSeekV4BuiltinPolicy } from "@oh-my-pi/pi-catalog/provider-models/deepseek-policy";
+import { DEFAULT_MODEL_PER_PROVIDER, getCatalogProviderEntry } from "@oh-my-pi/pi-catalog/provider-models/descriptors";
 import { deepseekModelManagerOptions } from "@oh-my-pi/pi-catalog/provider-models/openai-compat";
 import type { FetchImpl, Model, ModelSpec } from "@oh-my-pi/pi-catalog/types";
 
@@ -66,6 +67,11 @@ function expectDeepSeekV4Contract(model: Model<"openai-completions">): void {
 }
 
 describe("DeepSeek first-party provider", () => {
+	test("uses V4 Flash as the first-party default", () => {
+		expect(DEFAULT_MODEL_PER_PROVIDER.deepseek).toBe("deepseek-v4-flash");
+		expect(getCatalogProviderEntry("deepseek")?.defaultModel).toBe("deepseek-v4-flash");
+	});
+
 	test("repairs stale generated metadata and aliases without changing pricing", () => {
 		for (const id of V4_IDS) {
 			const stale = staleDeepSeekSpec(id);
